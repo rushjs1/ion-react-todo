@@ -1,5 +1,13 @@
+import { IonPage, IonContent } from "@ionic/react";
+
 const LoginPage = () => {
-  return <div>LOGin PAge</div>;
+  return (
+    <IonPage>
+      <IonContent>
+        <div className="">Login page</div>
+      </IonContent>
+    </IonPage>
+  );
 };
 
 export default LoginPage;

@@ -1,0 +1,7 @@
+.ios ion-input,
+.md ion-input {
+  --border-color: #000 !important;
+  --border-width: 5px !important;
+  --border-radius: 10px !important;
+  --padding-start: 20px !important;
+}
