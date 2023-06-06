@@ -7,6 +7,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  IonContent,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -39,6 +40,8 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import LoginPage from "./pages/auth/LoginPage";
+import RegistrationPage from "./pages/auth/RegistrationPage";
 
 setupIonicReact();
 
@@ -64,6 +67,10 @@ const AuthApp: React.FC = () => (
           <Route exact path="/">
             <Redirect to="/tab1" />
           </Route>
+
+          <Route exact path="/foo">
+            <LoginPage />
+          </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
@@ -84,6 +91,30 @@ const AuthApp: React.FC = () => (
   </IonApp>
 );
 
-const UnauthApp: React.FC = () => <AuthenticationPage />;
+const UnauthApp: React.FC = () => (
+  <IonApp>
+    <IonContent>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <Route exact path="/auth">
+            <AuthenticationPage />;
+          </Route>
+
+          <Route exact path="/login">
+            <LoginPage />
+          </Route>
+
+          <Route exact path="/register">
+            <RegistrationPage />
+          </Route>
+
+          <Route exact path="/">
+            <Redirect to="/auth" />
+          </Route>
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonContent>
+  </IonApp>
+);
 
 export default isAuth ? AuthApp : UnauthApp;
