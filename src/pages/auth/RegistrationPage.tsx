@@ -1,3 +1,4 @@
+import { IonInputCustomEvent } from "@ionic/core";
 import {
   IonPage,
   IonContent,
@@ -9,8 +10,9 @@ import {
   IonToolbar,
   IonButton,
   IonBackButton,
+  InputChangeEventDetail,
 } from "@ionic/react";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 import "../../theme/auth/registration.css";
 
@@ -22,6 +24,21 @@ const RegistrationPage = () => {
     password: "",
   });
 
+  function setFormData(
+    event: IonInputCustomEvent<InputChangeEventDetail>,
+    key: string
+  ) {
+    setForm({
+      ...form,
+      [key]: event.detail.value as string,
+    });
+  }
+
+  function submit(e: FormEvent) {
+    e.preventDefault();
+    console.log(form);
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -32,44 +49,56 @@ const RegistrationPage = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonList className="pt-52">
-          <IonItem lines="none">
-            <IonLabel position="stacked">First Name</IonLabel>
-            <IonInput
-              className="border-black border-2 rounded-md"
-              onChange={(e) => {
-                setForm({
-                  ...form,
-                  //@ts-ignore
-                  firstName: e.target.value,
-                });
-              }}
-            />
-            {form.firstName}
-          </IonItem>
+        <form onSubmit={(e) => submit(e)}>
+          <IonList className="pt-52">
+            <IonItem lines="none">
+              <IonLabel position="stacked">First Name</IonLabel>
+              <IonInput
+                required
+                type="text"
+                className="border-black border-2 rounded-md"
+                onIonChange={(e) => setFormData(e, "firstName")}
+              />
+            </IonItem>
+            <IonItem lines="none">
+              <IonLabel position="stacked">Last Name</IonLabel>
+              <IonInput
+                required
+                type="text"
+                className="border-black border-2 rounded-md"
+                onIonChange={(e) => setFormData(e, "lastName")}
+              />
+            </IonItem>
 
-          <IonItem lines="none">
-            <IonLabel position="stacked">Last Name</IonLabel>
-            <IonInput className="border-black border-2 rounded-md" />
-          </IonItem>
+            <IonItem lines="none">
+              <IonLabel position="stacked">Email</IonLabel>
+              <IonInput
+                required
+                type="email"
+                className="border-black border-2 rounded-md"
+                onIonChange={(e) => setFormData(e, "email")}
+              />
+            </IonItem>
 
-          <IonItem lines="none">
-            <IonLabel position="stacked">Email</IonLabel>
-            <IonInput className="border-black border-2 rounded-md" />
-          </IonItem>
+            <IonItem lines="none" className="">
+              <IonLabel position="stacked">Password</IonLabel>
+              <IonInput
+                required
+                type="password"
+                className="border-black border-2 rounded-md"
+                onIonChange={(e) => setFormData(e, "password")}
+              />
+            </IonItem>
 
-          <IonItem lines="none" className="">
-            <IonLabel position="stacked">Password</IonLabel>
-            <IonInput className="border-black border-2 rounded-md" />
-          </IonItem>
-
-          <IonButton
-            className="font-bold text-lg px-2.5 mt-4 ml-2"
-            expand="block"
-          >
-            <span>Submit</span>
-          </IonButton>
-        </IonList>
+            <IonButton
+              className="font-bold text-lg px-2.5 mt-4 ml-2"
+              expand="block"
+              type="submit"
+            >
+              <span>Submit</span>
+            </IonButton>
+          </IonList>
+        </form>
       </IonContent>
     </IonPage>
   );
