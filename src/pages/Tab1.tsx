@@ -13,6 +13,7 @@ import {
   IonFab,
   IonFabButton,
   IonFabList,
+  useIonRouter,
 } from "@ionic/react";
 
 import {
@@ -21,9 +22,14 @@ import {
   pencilOutline,
 } from "ionicons/icons";
 
-import { Route } from "react-router-dom";
+import { useEffect } from "react";
+import { getCookie } from "../hooks/useCookie";
+import { useToast } from "../hooks/components/useToast";
 
 const Tab1: React.FC = () => {
+  const router = useIonRouter();
+  const { presentToast } = useToast();
+
   const data = [
     {
       id: 1,
@@ -40,10 +46,22 @@ const Tab1: React.FC = () => {
   ];
 
   function foo(list: { id: number; title: string }) {
-    console.log(list.title);
-
-    //Redirect(`/${list.title}`);
+    router.push(`tab1/${list.id}`, "forward", "push");
   }
+
+  const token = getCookie("XSRF-TOKEN");
+
+  useEffect(() => {
+    if (token && token.length > 0) {
+      return;
+    }
+
+    //no token
+    router.push("/auth", "back", "replace");
+    presentToast("bottom", "error-toast", "Something went wrong.");
+
+    return () => {};
+  }, [token]);
 
   return (
     <IonPage>
@@ -65,11 +83,7 @@ const Tab1: React.FC = () => {
               <IonButton>See All</IonButton>
             </IonListHeader>
             {data.map((list, index) => (
-              <IonItem
-                onClick={() => foo(list)}
-                key={index}
-                routerLink={`/tab1/${list.id}`}
-              >
+              <IonItem onClick={() => foo(list)} key={index}>
                 <IonLabel>{list.title}</IonLabel>
               </IonItem>
             ))}

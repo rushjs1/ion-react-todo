@@ -10,6 +10,7 @@ import {
   IonContent,
   setupIonicReact,
 } from "@ionic/react";
+import { createContext } from "react";
 import { IonReactRouter } from "@ionic/react-router";
 import {
   personCircleOutline,
@@ -43,78 +44,82 @@ import "./theme/variables.css";
 import LoginPage from "./pages/auth/LoginPage";
 import RegistrationPage from "./pages/auth/RegistrationPage";
 
+import { useAuth } from "./hooks/data/useAuth";
+
 setupIonicReact();
 
-const isAuth = false;
+const AuthContext = createContext(false);
 
-const AuthApp: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
-          </Route>
-          <Route path="/tab1/:id">
-            <ListOfListsView />
-          </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
-          </Route>
-          <Route path="/tab3">
-            <Tab3 />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/tab1" />
-          </Route>
+const App: React.FC = () => {
+  const { isLoggedIn } = useAuth();
 
-          <Route exact path="/foo">
-            <LoginPage />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={listOutline} />
-            <IonLabel>Lists</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={archiveOutline} />
-            <IonLabel>Archive</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={personCircleOutline} />
-            <IonLabel>Account</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+  return (
+    <AuthContext.Provider value={isLoggedIn}>
+      <IonApp>
+        <IonContent>
+          <IonReactRouter>
+            <IonRouterOutlet>
+              <Route exact path="/auth">
+                <AuthenticationPage />;
+              </Route>
+              <Route exact path="/login">
+                <LoginPage />
+              </Route>
+              <Route exact path="/register">
+                <RegistrationPage />
+              </Route>
+              <Route path="/tabs" render={() => <TabsRouterOutlet />} />
+              <Route exact path="/">
+                <Redirect to="/auth" />
+              </Route>
+            </IonRouterOutlet>
+          </IonReactRouter>
+        </IonContent>
+      </IonApp>
+    </AuthContext.Provider>
+  );
+};
 
-const UnauthApp: React.FC = () => (
-  <IonApp>
-    <IonContent>
-      <IonReactRouter>
-        <IonRouterOutlet>
-          <Route exact path="/auth">
-            <AuthenticationPage />;
-          </Route>
+const TabsRouterOutlet: React.FC = () => {
+  return (
+    <IonTabs>
+      <IonRouterOutlet>
+        <Route exact path="/tabs/tab1">
+          <Tab1 />
+        </Route>
+        <Route path="/tabs/tab1/:id">
+          <ListOfListsView />
+        </Route>
+        <Route exact path="/tabs/tab2">
+          <Tab2 />
+        </Route>
+        <Route path="/tabs/tab3">
+          <Tab3 />
+        </Route>
+        <Route exact path="/">
+          <Redirect to="/tabs/tab1" />
+        </Route>
 
-          <Route exact path="/login">
-            <LoginPage />
-          </Route>
+        <Route exact path="/foo">
+          <LoginPage />
+        </Route>
+      </IonRouterOutlet>
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="tab1" href="/tabs/tab1">
+          <IonIcon aria-hidden="true" icon={listOutline} />
+          <IonLabel>Lists</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="tab2" href="/tabs/tab2">
+          <IonIcon aria-hidden="true" icon={archiveOutline} />
+          <IonLabel>Archive</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="tab3" href="/tabs/tab3">
+          <IonIcon aria-hidden="true" icon={personCircleOutline} />
+          <IonLabel>Account</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  );
+};
 
-          <Route exact path="/register">
-            <RegistrationPage />
-          </Route>
-
-          <Route exact path="/">
-            <Redirect to="/auth" />
-          </Route>
-        </IonRouterOutlet>
-      </IonReactRouter>
-    </IonContent>
-  </IonApp>
-);
-
-export default isAuth ? AuthApp : UnauthApp;
+export default App;
